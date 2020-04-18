@@ -18,11 +18,11 @@ import java.util.Map;
  */
 public class OkRequestToAz {
 
-    private static URI getUrlWithoutParameters(URI uri) throws IOException {
+    private static URI getBaseUrl(URI uri) throws IOException {
         try {
             return new URI(uri.getScheme(),
                     uri.getAuthority(),
-                    uri.getPath(),
+                    null,
                     null, // Ignore the query part of the input url
                     uri.getFragment());
         } catch (URISyntaxException e) {
@@ -78,9 +78,14 @@ public class OkRequestToAz {
 
         azRequest.setHttpMethod(httpMethodName);
         azRequest.setContent(new ByteArrayInputStream(body));
-        azRequest.setEndpoint(getUrlWithoutParameters(okRequest.url().uri()));
+        azRequest.setEndpoint(getBaseUrl(okRequest.url().uri()));
+        azRequest.setResourcePath(okRequest.url().uri().getPath());
         azRequest.setParameters(getParametersFromUrl(okRequest.url()));
         azRequest.setHeaders(okHeadersToAz(okRequest.headers()));
+
+        if (okRequest.body() != null && okRequest.body().contentType() != null) {
+            azRequest.getHeaders().put("Content-Type", okRequest.body().contentType().toString());
+        }
 
         return azRequest;
     }

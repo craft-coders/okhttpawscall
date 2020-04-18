@@ -2,7 +2,6 @@ package de.craftcoders.okhttpcallaws;
 
 import com.amazonaws.ClientConfiguration;
 import com.amazonaws.auth.AWS4Signer;
-import com.amazonaws.auth.AWSCredentials;
 import com.amazonaws.auth.AWSCredentialsProvider;
 import com.amazonaws.auth.DefaultAWSCredentialsProviderChain;
 import com.amazonaws.http.AmazonHttpClient;
@@ -26,6 +25,17 @@ public class CallAwsInterceptor implements okhttp3.Interceptor {
                 new AmazonHttpClient(clientConfiguration),
                 new DefaultSignerProvider(null, aws4Signer),
                 new DefaultAWSCredentialsProviderChain(),
+                serviceName
+        );
+    }
+
+    public static CallAwsInterceptor defaultUnauthenticatedCallAwsInterceptor(String serviceName) {
+        ClientConfiguration clientConfiguration = new ClientConfiguration().withSocketTimeout(1 * 1000).withMaxErrorRetry(0);
+
+        return new CallAwsInterceptor(
+                new AmazonHttpClient(clientConfiguration),
+                null,
+                null,
                 serviceName
         );
     }
@@ -60,7 +70,7 @@ public class CallAwsInterceptor implements okhttp3.Interceptor {
     private String serviceName;
 
     public CallAwsInterceptor(
-            com.amazonaws.http.AmazonHttpClient amazonHttpClient,
+            AmazonHttpClient amazonHttpClient,
             SignerProvider signerProvider,
             AWSCredentialsProvider awsCredentialsProvider,
             String serviceName

@@ -1,6 +1,7 @@
 package de.craftcoders.okhttpcallaws;
 
 import java.io.IOException;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -8,18 +9,20 @@ import java.util.Map;
  */
 public class AzResponseToOk {
 
-    private static okhttp3.Headers azHeadersToOk(Map<String, String> azHeaders) {
+    private static okhttp3.Headers azHeadersToOk(Map<String, List<String>> azHeaders) {
         okhttp3.Headers.Builder okHeadersBuilder = new okhttp3.Headers.Builder();
 
-        for (Map.Entry<String, String> set : azHeaders.entrySet()) {
-            okHeadersBuilder.add(set.getKey(), set.getValue());
+        for (Map.Entry<String, List<String>> set : azHeaders.entrySet()) {
+            for (String value: set.getValue()) {
+                okHeadersBuilder.add(set.getKey(), value);
+            }
         }
 
         return okHeadersBuilder.build();
     }
 
     private static okhttp3.MediaType extractMediaType(com.amazonaws.http.HttpResponse httpResponse) {
-        okhttp3.Headers okHeaders = azHeadersToOk(httpResponse.getHeaders());
+        okhttp3.Headers okHeaders = azHeadersToOk(httpResponse.getAllHeaders());
         okhttp3.MediaType okMediaType = null;
 
         if (okHeaders.get("content-type") != null) {
@@ -35,7 +38,7 @@ public class AzResponseToOk {
 
         okhttp3.Response okResponse = new okhttp3.Response.Builder()
             .code(azHttpResponse.getStatusCode())
-            .headers(azHeadersToOk(azHttpResponse.getHeaders()))
+            .headers(azHeadersToOk(azHttpResponse.getAllHeaders()))
             .protocol(okhttp3.Protocol.HTTP_1_1)
             .body(okhttp3.ResponseBody.create(extractMediaType(azHttpResponse), body))
             .message(azHttpResponse.getStatusText())
