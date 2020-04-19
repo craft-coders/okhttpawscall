@@ -9,20 +9,17 @@ import java.util.Map;
  */
 public class AzResponseToOk {
 
-    private static okhttp3.Headers azHeadersToOk(Map<String, List<String>> azHeaders) {
+    private static okhttp3.Headers azHeadersToOk(Map<String, String> azHeaders) {
         okhttp3.Headers.Builder okHeadersBuilder = new okhttp3.Headers.Builder();
 
-        for (Map.Entry<String, List<String>> set : azHeaders.entrySet()) {
-            for (String value: set.getValue()) {
-                okHeadersBuilder.add(set.getKey(), value);
-            }
+        for (Map.Entry<String, String> set : azHeaders.entrySet()) {
+            okHeadersBuilder.add(set.getKey(), set.getValue());
         }
 
         return okHeadersBuilder.build();
     }
 
-    private static okhttp3.MediaType extractMediaType(com.amazonaws.http.HttpResponse httpResponse) {
-        okhttp3.Headers okHeaders = azHeadersToOk(httpResponse.getAllHeaders());
+    private static okhttp3.MediaType extractMediaType(okhttp3.Headers okHeaders) {
         okhttp3.MediaType okMediaType = null;
 
         if (okHeaders.get("content-type") != null) {
@@ -36,11 +33,13 @@ public class AzResponseToOk {
         com.amazonaws.http.HttpResponse azHttpResponse = responseContainer.getHttpResponse();
         byte[] body = responseContainer.getBody();
 
+        okhttp3.Headers okHeaders = azHeadersToOk(azHttpResponse.getHeaders());
+
         okhttp3.Response okResponse = new okhttp3.Response.Builder()
             .code(azHttpResponse.getStatusCode())
-            .headers(azHeadersToOk(azHttpResponse.getAllHeaders()))
+            .headers(okHeaders)
             .protocol(okhttp3.Protocol.HTTP_1_1)
-            .body(okhttp3.ResponseBody.create(extractMediaType(azHttpResponse), body))
+            .body(okhttp3.ResponseBody.create(extractMediaType(okHeaders), body))
             .message(azHttpResponse.getStatusText())
             .request(okRequest)
             .build();

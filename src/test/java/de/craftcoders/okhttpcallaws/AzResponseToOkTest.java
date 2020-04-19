@@ -20,18 +20,18 @@ public class AzResponseToOkTest {
         okhttp3.Request okRequest = new okhttp3.Request.Builder().url("http://example.org").build();
         com.amazonaws.http.HttpResponse httpResponse = mock(com.amazonaws.http.HttpResponse.class);
 
-        Map<String, List<String>> headers = new HashMap<String, List<String>>();
-        headers.put("Content-Type", Arrays.asList("text/html"));
-        headers.put("via", Arrays.asList("1.1 test"));
+        Map<String, String> headers = new HashMap<String, String>();
+        headers.put("Content-Type", "text/html");
+        headers.put("via", "1.1 test");
 
         String content = "<html><body><h1>Hello World</h1></body></html>";
 
         when(httpResponse.getStatusCode()).thenReturn(200);
         when(httpResponse.getStatusText()).thenReturn("OK");
-        when(httpResponse.getAllHeaders()).thenReturn(headers);
+        when(httpResponse.getHeaders()).thenReturn(headers);
         when(httpResponse.getContent()).thenReturn(new StringInputStream(content));
-        when(httpResponse.getHeaderValues("Content-Type")).thenReturn(headers.get("Content-Type"));
-        when(httpResponse.getHeaderValues("via")).thenReturn(headers.get("via"));
+        when(httpResponse.getHeaderValues("Content-Type")).thenReturn(Arrays.asList(headers.get("Content-Type")));
+        when(httpResponse.getHeaderValues("via")).thenReturn(Arrays.asList(headers.get("via")));
 
         // Act
         okhttp3.Response okResponse = AzResponseToOk.azHttpResponseToOkResponse(new AzHttpResponseContainer(httpResponse), okRequest);
