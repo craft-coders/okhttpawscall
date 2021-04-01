@@ -28,7 +28,7 @@ However you can get the library with [JitPack](https://jitpack.io/).
 <dependency>
     <groupId>com.github.craft-coders</groupId>
     <artifactId>okhttpawscall</artifactId>
-    <version>0.1.2</version>
+    <version>0.1.3</version>
 </dependency>
 ```
 

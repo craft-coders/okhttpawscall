@@ -125,7 +125,7 @@ public class CallAwsInterceptorTest {
 
         verify(putRequestedFor(urlEqualTo("/abc"))
             .withRequestBody(equalToJson("{\"abc\": 123}"))
-            .withHeader("Authorization", matching("AWS4-HMAC-SHA256 Credential=AKIAIOSFODNN7EXAMPLE/[0-9]{8}/us-east-1/execute-api/aws4_request, SignedHeaders=amz-sdk-invocation-id;amz-sdk-retry;content-type;host;user-agent;x-amz-date, Signature=.*"))
+            .withHeader("Authorization", matching("AWS4-HMAC-SHA256 Credential=AKIAIOSFODNN7EXAMPLE/[0-9]{8}/us-east-1/execute-api/aws4_request, SignedHeaders=amz-sdk-invocation-id;amz-sdk-request;amz-sdk-retry;content-type;host;user-agent;x-amz-date, Signature=.*"))
             .withHeader("Content-Type", matching("application/json.*"))
             .withHeader("x-amz-date", matching("[0-9]*T[0-9]*Z"))
         );
