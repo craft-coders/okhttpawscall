@@ -17,7 +17,10 @@ import java.io.IOException;
 public class CallAwsInterceptor implements okhttp3.Interceptor {
 
     public static CallAwsInterceptor defaultAuthenticatedCallAwsInterceptor(String serviceName) {
-        ClientConfiguration clientConfiguration = new ClientConfiguration().withSocketTimeout(1 * 1000).withMaxErrorRetry(0);
+        ClientConfiguration clientConfiguration = new ClientConfiguration()
+            .withSocketTimeout(10 * 1000)
+            .withConnectionTimeout(10 * 1000)
+            .withMaxErrorRetry(3);
         AWS4Signer aws4Signer = new AWS4Signer();
         aws4Signer.setServiceName(serviceName);
 
@@ -30,7 +33,10 @@ public class CallAwsInterceptor implements okhttp3.Interceptor {
     }
 
     public static CallAwsInterceptor defaultUnauthenticatedCallAwsInterceptor(String serviceName) {
-        ClientConfiguration clientConfiguration = new ClientConfiguration().withSocketTimeout(1 * 1000).withMaxErrorRetry(0);
+        ClientConfiguration clientConfiguration = new ClientConfiguration()
+            .withSocketTimeout(10 * 1000)
+            .withConnectionTimeout(10 * 1000)
+            .withMaxErrorRetry(3);
 
         return new CallAwsInterceptor(
                 new AmazonHttpClient(clientConfiguration),
